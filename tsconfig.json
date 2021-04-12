@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "outDir": "./lib",
+    "baseUrl": "./src",
+    "target": "es6",
+    "sourceMap": true,
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "rootDir": "./",
+    "lib": ["es6"],
+    "moduleResolution": "node",
+    "types": ["node"],
+    "incremental": true,
+  },
+  "files": ["src/index.ts"],
+  "exclude": ["node_modules"]
+}
