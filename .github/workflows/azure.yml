@@ -64,4 +64,7 @@ jobs:
     - run: |
           # building creating a new image tags for version control
           docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/mycity-auth:${{ github.sha }} -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/mycity-auth:latest
+          # Testing that the container actually runs.
+          docker run --rm -d -p 7000:7000/tcp ${{ secrets.REGISTRY_LOGIN_SERVER }}/mycity-auth:${{ github.sha }}
           docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/mycity-auth:${{ github.sha }}
+          docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/mycity-auth:latest 
