@@ -52,6 +52,7 @@ export class AuthController {
         const roles = [];
         if (role) { roles.push(role); }
         user = new Users({ email, password, roles, name });
+        user.isVerified = true;
         const createResult = await DbUserHelper.saveUser(user);
         error = createResult.error;
         if (error) { return res.status(500).send({ errors: [{ msg: error }] }); }
@@ -65,13 +66,15 @@ export class AuthController {
 
         // const protocol = req.secure ? 'https' : 'http'
         // const targetUrl = `${protocol}://${req.headers.host}/confirmation?token=${token.token}`
-        const sendResult = await this.sendTokenViaEmail(user.email, token.token);
+        /*const sendResult = await this.sendTokenViaEmail(user.email, token.token);
         error = sendResult.error;
         if (error) { return res.status(500).send({ errors: [{ msg: error }] }); }
+        */
 
-        res.status(200).send({ email: user.email, msg: `A verification email has been sent to ${user.email}.` });
-
+        res.status(200).send({ email: user.email, msg: `User account has been created and verified` });
     });
+
+    /* This part doesnt actually work.
     public confirmationPost = asyncMiddleware(async (req: Request, res: Response) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -96,6 +99,8 @@ export class AuthController {
         res.send({ token: this.generateToken(user.email, user.roles), exp: expires, username: user.name, email: user.email, roles: user.roles });
     });
 
+
+    
     // automatically send user confirmation from link and go to my campus afterwards
     public autoConfirmation = asyncMiddleware(async (req: Request, res: Response) => {
         const errors = validationResult(req);
@@ -113,7 +118,6 @@ export class AuthController {
             `
         )
     });
-
     public resendTokenPost = asyncMiddleware(async (req: Request, res: Response) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -140,6 +144,7 @@ export class AuthController {
 
         res.status(200).send(`A verification email has been sent to ${user.email}.`);
     });
+    
     public forgotPassword = asyncMiddleware(async (req: Request, res: Response) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -162,6 +167,7 @@ export class AuthController {
 
         res.status(200).send(`Reset token has been sent to ${user.email}.`);
     });
+    */
     public resetPassword = asyncMiddleware(async (req: Request, res: Response) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -180,7 +186,7 @@ export class AuthController {
         user.set({ password }).save();
         res.status(200).send(`${user.email} has reset password.`);
     });
-    private sendTokenViaEmail = async (to: User['email'], token: Token['token']) => {
+    /*private sendTokenViaEmail = async (to: User['email'], token: Token['token']) => {
         //Or click this <a href="https://mycampus-server.karage.fi/auth/econfirmation?token=${token}&email=${to}">link</a>
         try {
             console.log("sending email....");
@@ -203,7 +209,17 @@ export class AuthController {
             new Logger('AuthController').error(err.message, err.stack);
             return { error: 'Failed to send verification email' };
         }
-    }
+    }*/
+
+    // This is simply used for gateway auth_request. basically if there are no errors we return status 200.
+    public verifyUser = asyncMiddleware(async (req: Request, res: Response) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({ errors: errors.array() });
+        }
+        res.status(200).send({'user': "User legit"});
+    });
+
     private generateToken = (email: User['email'], roles: User['roles']) => {
         const expires = moment().add(365, 'days').unix();
         return jwt.encode({ sub: email, exp: expires }, JWT_SECRET);

@@ -13,11 +13,7 @@ export class AuthRoutes {
         this.initializeRoutes();
     }
     public initializeRoutes = (): void => {
-        this.router.post('/forgot_password', [
-            check('email', 'Email is not valid').isEmail(),
-            check('email', 'Email cannot be blank').not().isEmpty(),
-            sanitize('email').normalizeEmail({ gmail_remove_dots: false }),
-        ], this.controller.forgotPassword);
+       
 
         this.router.post('/reset_password', [
             check('email', 'Email cannot be blank').not().isEmpty(),
@@ -25,7 +21,7 @@ export class AuthRoutes {
             check('resetToken', 'Reset token cannot be blank').not().isEmpty(),
             sanitize('email').normalizeEmail({ gmail_remove_dots: false }),
         ], this.controller.resetPassword);
-
+        /*
         this.router.post('/confirmation', [
             check('email', 'Email is not valid').isEmail(),
             check('email', 'Email cannot be blank').not().isEmpty(),
@@ -33,17 +29,25 @@ export class AuthRoutes {
             sanitize('email').normalizeEmail({ gmail_remove_dots: false }),
         ], this.controller.confirmationPost);
 
+        
         // email auto confirmation link
         this.router.get('/econfirmation', [
             query('token', 'I need the token').not().isEmpty(),
             query('email', 'I need the email').not().isEmpty(),
         ], this.controller.autoConfirmation);
 
+        this.router.post('/forgot_password', [
+            check('email', 'Email is not valid').isEmail(),
+            check('email', 'Email cannot be blank').not().isEmpty(),
+            sanitize('email').normalizeEmail({ gmail_remove_dots: false }),
+        ], this.controller.forgotPassword);
+
         this.router.post('/resend', [
             check('email', 'Email is not valid').isEmail(),
             check('email', 'Email cannot be blank').not().isEmpty(),
             sanitize('email').normalizeEmail({ gmail_remove_dots: false }),
         ], this.controller.resendTokenPost);
+        */
 
         this.router.post('/login', [
             check('email', 'Email is not valid').isEmail(),
@@ -77,5 +81,9 @@ export class AuthRoutes {
                 //this.passport.requireAdmin,
                 this.userController.deleteUser,
             );
+        this.router.route('/verify').get(
+                this.passport.requireUser,
+                this.controller.verifyUser,
+        );
     }
 }
